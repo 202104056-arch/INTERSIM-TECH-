@@ -8,59 +8,104 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <style>
-    body { font-family: Arial; margin: 0; }
-
-    h2 { text-align:center; margin:10px; }
-
-    #filters {
-      padding:10px;
-      text-align:center;
-      background:#f5f5f5;
+    body {
+      font-family: Arial;
+      margin: 0;
+      display: flex;
     }
 
-    input, select {
-      margin:5px;
-      padding:6px;
+    /* 📊 PANEL IZQUIERDO (FILTROS) */
+    #panel {
+      width: 280px;
+      height: 100vh;
+      background: #f5f5f5;
+      padding: 15px;
+      box-sizing: border-box;
+      overflow-y: auto;
     }
 
     #map {
-      height: 80vh;
+      flex: 1;
+      height: 100vh;
+    }
+
+    h2 {
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 20px;
+      padding: 10px;
+      background: white;
+      border-radius: 10px;
+    }
+
+    button, select, input {
       width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+
+    button:hover {
+      background: #0056b3;
     }
   </style>
 </head>
 
 <body>
 
-<h2>🏠 Mapa Inmobiliario PRO</h2>
+<!-- 📊 PANEL DE FILTROS -->
+<div id="panel">
 
-<!-- 🔍 FILTROS -->
-<div id="filters">
+  <h2>🏠 Filtros</h2>
 
-  <input id="ubicacion" placeholder="Zona (Cala Cala, Centro...)" />
+  <!-- 📍 UBICACIÓN -->
+  <div class="section">
+    <h4>📍 Ubicación</h4>
+    <input id="ubicacion" placeholder="Ej: Cala Cala, Centro..." />
+  </div>
 
-  <select id="operacion">
-    <option value="todos">Operación</option>
-    <option value="anticretico">Anticrético</option>
-    <option value="alquiler">Alquiler</option>
-    <option value="compra">Compra</option>
-  </select>
+  <!-- 🏷️ OPERACIÓN -->
+  <div class="section">
+    <h4>🏷️ Operación</h4>
+    <button onclick="setOperacion('todos')">Todos</button>
+    <button onclick="setOperacion('compra')">Compra</button>
+    <button onclick="setOperacion('alquiler')">Alquiler</button>
+    <button onclick="setOperacion('anticretico')">Anticrético</button>
+  </div>
 
-  <select id="tipo">
-    <option value="todos">Tipo</option>
-    <option value="casa">Casa</option>
-    <option value="departamento">Departamento</option>
-    <option value="habitacion">Habitación</option>
-    <option value="tienda">Tienda</option>
-    <option value="terreno">Terreno</option>
-  </select>
+  <!-- 🏠 TIPO -->
+  <div class="section">
+    <h4>🏠 Tipo de Inmueble</h4>
+    <button onclick="setTipo('todos')">Todos</button>
+    <button onclick="setTipo('casa')">Casa</button>
+    <button onclick="setTipo('departamento')">Departamento</button>
+    <button onclick="setTipo('habitacion')">Habitación</button>
+    <button onclick="setTipo('tienda')">Tienda</button>
+    <button onclick="setTipo('terreno')">Terreno</button>
+  </div>
 
-  <input id="min" type="number" placeholder="Precio min" />
-  <input id="max" type="number" placeholder="Precio max" />
+  <!-- 💰 PRECIO -->
+  <div class="section">
+    <h4>💰 Precio</h4>
+    <input id="min" type="number" placeholder="Mínimo" />
+    <input id="max" type="number" placeholder="Máximo" />
+  </div>
 
-  <button onclick="aplicarFiltros()">Buscar</button>
+  <button onclick="aplicarFiltros()">🔍 Buscar</button>
+
 </div>
 
+<!-- 🗺️ MAPA -->
 <div id="map"></div>
 
 <!-- 🧾 MODAL -->
@@ -107,6 +152,18 @@
     maxZoom: 19
   }).addTo(map);
 
+  // 📦 VARIABLES DE FILTRO
+  let filtroOperacion = "todos";
+  let filtroTipo = "todos";
+
+  function setOperacion(val) {
+    filtroOperacion = val;
+  }
+
+  function setTipo(val) {
+    filtroTipo = val;
+  }
+
   // 🏠 PROPIEDADES
   var lugares = [
     {
@@ -116,7 +173,7 @@
       operacion: "compra",
       tipo: "casa",
       precio: 120000,
-      nombre: "Casa moderna Cala Cala",
+      nombre: "Casa moderna",
       imagen: "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
       descripcion: "Casa amplia con jardín"
     },
@@ -129,7 +186,7 @@
       precio: 350,
       nombre: "Depto centro",
       imagen: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      descripcion: "Ideal estudiantes"
+      descripcion: "Céntrico"
     },
     {
       lat: -17.37,
@@ -141,17 +198,6 @@
       nombre: "Casa anticrético",
       imagen: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
       descripcion: "Zona tranquila"
-    },
-    {
-      lat: -17.42,
-      lng: -66.13,
-      zona: "Sopocachi",
-      operacion: "compra",
-      tipo: "terreno",
-      precio: 80000,
-      nombre: "Terreno amplio",
-      imagen: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
-      descripcion: "Ideal construcción"
     }
   ];
 
@@ -170,12 +216,10 @@
     document.getElementById("modal").style.display = "none";
   }
 
-  // 🔍 FILTROS COMPLETOS
+  // 🔍 FILTROS
   function aplicarFiltros() {
 
     let zona = document.getElementById("ubicacion").value.toLowerCase();
-    let operacion = document.getElementById("operacion").value;
-    let tipo = document.getElementById("tipo").value;
     let min = document.getElementById("min").value;
     let max = document.getElementById("max").value;
 
@@ -187,8 +231,8 @@
     lugares.forEach(l => {
 
       let okZona = zona === "" || l.zona.toLowerCase().includes(zona);
-      let okOp = operacion === "todos" || l.operacion === operacion;
-      let okTipo = tipo === "todos" || l.tipo === tipo;
+      let okOp = filtroOperacion === "todos" || l.operacion === filtroOperacion;
+      let okTipo = filtroTipo === "todos" || l.tipo === filtroTipo;
       let okMin = !min || l.precio >= min;
       let okMax = !max || l.precio <= max;
 
@@ -198,7 +242,7 @@
 
         marker.bindPopup(`
           <div style="width:220px">
-            <img src="${l.imagen}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;">
+            <img src="${l.imagen}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
             <h3>${l.nombre}</h3>
             <p><b>Bs ${l.precio}</b></p>
             <button onclick='abrirModal(${JSON.stringify(l).replace(/'/g,"&apos;")})'>
@@ -217,7 +261,6 @@
     }
   }
 
-  // INICIO
   aplicarFiltros();
 
 </script>
