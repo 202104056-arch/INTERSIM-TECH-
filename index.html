@@ -15,18 +15,14 @@
       background: #eef3f9;
     }
 
-    /* 🏢 HEADER BRANDING */
+    /* 🏢 HEADER */
     #header {
       background: linear-gradient(90deg, #ff6a00, #ee0979);
       color: white;
       padding: 18px;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .logo {
-      font-size: 22px;
       font-weight: bold;
+      font-size: 20px;
     }
 
     .tagline {
@@ -35,7 +31,7 @@
       margin-top: 5px;
     }
 
-    /* 📊 FILTROS */
+    /* 🔍 FILTROS */
     #filters {
       display: flex;
       flex-wrap: wrap;
@@ -51,7 +47,6 @@
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ddd;
-      outline: none;
     }
 
     #filters button {
@@ -62,7 +57,6 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      transition: 0.2s;
     }
 
     #filters button:hover {
@@ -92,7 +86,6 @@
       padding:15px;
       border-radius:15px;
       position:relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     #modal img {
@@ -115,7 +108,7 @@
 
 <!-- 🏢 HEADER -->
 <div id="header">
-  <div class="logo">🏢 COCHATECH REAL ESTATE</div>
+  🏢 COCHATECH REAL ESTATE
   <div class="tagline">Encuentra tu propiedad ideal en Cochabamba</div>
 </div>
 
@@ -209,7 +202,9 @@
   ];
 
   // 📄 MODAL
-  function abrirModal(l) {
+  function abrirModal(i) {
+    let l = lugares[i];
+
     document.getElementById("modal").style.display = "flex";
     document.getElementById("imgModal").src = l.imagen;
     document.getElementById("tituloModal").innerText = l.nombre;
@@ -235,7 +230,7 @@
 
     let bounds = [];
 
-    lugares.forEach(l => {
+    lugares.forEach((l, i) => {
 
       let okZona = zona === "" || l.zona.toLowerCase().includes(zona);
       let okOp = operacion === "todos" || l.operacion === operacion;
@@ -251,7 +246,7 @@
           <b>${l.nombre}</b><br>
           ${l.zona}<br>
           Bs ${l.precio}<br>
-          <button onclick='abrirModal(${JSON.stringify(l).replace(/'/g,"&apos;")})'>
+          <button onclick="abrirModal(${i})">
             Ver propiedad
           </button>
         `);
