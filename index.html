@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa Filtrable</title>
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    #map {
+      height: 500px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Mapa con filtros</h2>
+
+<!-- FILTRO -->
+<select id="filtro">
+  <option value="todos">Todos</option>
+  <option value="venta">Venta</option>
+  <option value="alquiler">Alquiler</option>
+</select>
+
+<!-- MAPA -->
+<div id="map"></div>
+
+<script>
+  // 📍 Centro (Cochabamba)
+  var map = L.map('map').setView([-17.39, -66.15], 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  // 🏠 Datos de ejemplo
+  var lugares = [
+    {lat: -17.39, lng: -66.15, tipo: "venta", nombre: "Casa en venta"},
+    {lat: -17.41, lng: -66.17, tipo: "alquiler", nombre: "Departamento en alquiler"},
+    {lat: -17.38, lng: -66.14, tipo: "venta", nombre: "Casa 2"}
+  ];
+
+  var markers = [];
+
+  function mostrar(tipo) {
+    // borrar marcadores anteriores
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+
+    lugares.forEach(l => {
+      if (tipo === "todos" || l.tipo === tipo) {
+        var marker = L.marker([l.lat, l.lng])
+          .addTo(map)
+          .bindPopup(l.nombre);
+
+        markers.push(marker);
+      }
+    });
+  }
+
+  document.getElementById("filtro").addEventListener("change", function() {
+    mostrar(this.value);
+  });
+
+  // mostrar todo al inicio
+  mostrar("todos");
+</script>
+
+</body>
+</html>
