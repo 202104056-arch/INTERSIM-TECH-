@@ -1,170 +1,154 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mapa Inmobiliario PRO</title>
+  <title>Cochatech Inmobiliaria</title>
   <meta charset="utf-8" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <style>
+
     body {
-      font-family: Arial;
       margin: 0;
-      display: flex;
+      font-family: Arial;
+      background: #f4f6f9;
     }
 
-    /* 📊 PANEL IZQUIERDO (FILTROS) */
+    /* 🟦 TOP BAR */
+    #topbar {
+      background: #0d47a1;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+
+    #logo {
+      font-weight: bold;
+      font-size: 18px;
+      margin-right: 20px;
+    }
+
+    #topbar span {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* 📊 LAYOUT */
+    #container {
+      display: flex;
+      height: calc(100vh - 50px);
+    }
+
+    /* 🧩 PANEL */
     #panel {
-      width: 280px;
-      height: 100vh;
-      background: #f5f5f5;
+      width: 300px;
+      background: white;
       padding: 15px;
-      box-sizing: border-box;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       overflow-y: auto;
     }
 
-    #map {
-      flex: 1;
-      height: 100vh;
-    }
-
-    h2 {
-      font-size: 18px;
-      text-align: center;
-    }
-
     .section {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       padding: 10px;
-      background: white;
       border-radius: 10px;
+      background: #f7f7f7;
     }
 
     button, select, input {
       width: 100%;
-      margin-top: 8px;
+      margin-top: 6px;
       padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
     }
 
     button {
-      cursor: pointer;
-      background: #007bff;
+      background: #1976d2;
       color: white;
       border: none;
-      border-radius: 8px;
+      cursor: pointer;
     }
 
     button:hover {
-      background: #0056b3;
+      background: #0d47a1;
     }
+
+    /* 🗺️ MAPA */
+    #map {
+      flex: 1;
+    }
+
   </style>
 </head>
 
 <body>
 
-<!-- 📊 PANEL DE FILTROS -->
-<div id="panel">
-
-  <h2>🏠 Filtros</h2>
-
-  <!-- 📍 UBICACIÓN -->
-  <div class="section">
-    <h4>📍 Ubicación</h4>
-    <input id="ubicacion" placeholder="Ej: Cala Cala, Centro..." />
-  </div>
-
-  <!-- 🏷️ OPERACIÓN -->
-  <div class="section">
-    <h4>🏷️ Operación</h4>
-    <button onclick="setOperacion('todos')">Todos</button>
-    <button onclick="setOperacion('compra')">Compra</button>
-    <button onclick="setOperacion('alquiler')">Alquiler</button>
-    <button onclick="setOperacion('anticretico')">Anticrético</button>
-  </div>
-
-  <!-- 🏠 TIPO -->
-  <div class="section">
-    <h4>🏠 Tipo de Inmueble</h4>
-    <button onclick="setTipo('todos')">Todos</button>
-    <button onclick="setTipo('casa')">Casa</button>
-    <button onclick="setTipo('departamento')">Departamento</button>
-    <button onclick="setTipo('habitacion')">Habitación</button>
-    <button onclick="setTipo('tienda')">Tienda</button>
-    <button onclick="setTipo('terreno')">Terreno</button>
-  </div>
-
-  <!-- 💰 PRECIO -->
-  <div class="section">
-    <h4>💰 Precio</h4>
-    <input id="min" type="number" placeholder="Mínimo" />
-    <input id="max" type="number" placeholder="Máximo" />
-  </div>
-
-  <button onclick="aplicarFiltros()">🔍 Buscar</button>
-
+<!-- 🟦 TOP BAR -->
+<div id="topbar">
+  <div id="logo">🏠 COCHATECH</div>
+  <span>Sistema Inmobiliario Inteligente</span>
 </div>
 
-<!-- 🗺️ MAPA -->
-<div id="map"></div>
+<div id="container">
 
-<!-- 🧾 MODAL -->
-<div id="modal" style="
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
-  align-items:center;
-">
+  <!-- 📊 PANEL -->
+  <div id="panel">
 
-  <div style="
-    background:white;
-    width:320px;
-    padding:15px;
-    border-radius:12px;
-    position:relative;
-  ">
+    <div class="section">
+      <h4>📍 Ubicación</h4>
+      <input id="ubicacion" placeholder="Cala Cala, Centro..." />
+    </div>
 
-    <span onclick="cerrarModal()" style="
-      position:absolute;
-      top:8px;
-      right:12px;
-      cursor:pointer;
-      font-size:18px;
-    ">✖</span>
+    <div class="section">
+      <h4>🏷️ Operación</h4>
+      <button onclick="setOperacion('todos')">Todos</button>
+      <button onclick="setOperacion('compra')">Compra</button>
+      <button onclick="setOperacion('alquiler')">Alquiler</button>
+      <button onclick="setOperacion('anticretico')">Anticrético</button>
+    </div>
 
-    <img id="imgModal" style="width:100%;border-radius:10px;">
-    <h3 id="tituloModal"></h3>
-    <p id="precioModal"></p>
-    <p id="descModal"></p>
+    <div class="section">
+      <h4>🏠 Tipo</h4>
+      <button onclick="setTipo('todos')">Todos</button>
+      <button onclick="setTipo('casa')">Casa</button>
+      <button onclick="setTipo('departamento')">Departamento</button>
+      <button onclick="setTipo('habitacion')">Habitación</button>
+      <button onclick="setTipo('tienda')">Tienda</button>
+      <button onclick="setTipo('terreno')">Terreno</button>
+    </div>
+
+    <div class="section">
+      <h4>💰 Precio</h4>
+      <input id="min" type="number" placeholder="Mínimo" />
+      <input id="max" type="number" placeholder="Máximo" />
+    </div>
+
+    <button onclick="aplicarFiltros()">🔍 Buscar</button>
 
   </div>
+
+  <!-- 🗺️ MAPA -->
+  <div id="map"></div>
+
 </div>
 
 <script>
 
-  // 🗺️ MAPA
   var map = L.map('map').setView([-17.39, -66.15], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
   }).addTo(map);
 
-  // 📦 VARIABLES DE FILTRO
   let filtroOperacion = "todos";
   let filtroTipo = "todos";
 
-  function setOperacion(val) {
-    filtroOperacion = val;
-  }
+  function setOperacion(v){ filtroOperacion = v; }
+  function setTipo(v){ filtroTipo = v; }
 
-  function setTipo(val) {
-    filtroTipo = val;
-  }
-
-  // 🏠 PROPIEDADES
   var lugares = [
     {
       lat: -17.39,
@@ -173,9 +157,9 @@
       operacion: "compra",
       tipo: "casa",
       precio: 120000,
-      nombre: "Casa moderna",
+      nombre: "Casa Moderna",
       imagen: "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
-      descripcion: "Casa amplia con jardín"
+      descripcion: "Casa con jardín y garaje"
     },
     {
       lat: -17.41,
@@ -184,40 +168,19 @@
       operacion: "alquiler",
       tipo: "departamento",
       precio: 350,
-      nombre: "Depto centro",
+      nombre: "Depto Centro",
       imagen: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      descripcion: "Céntrico"
-    },
-    {
-      lat: -17.37,
-      lng: -66.16,
-      zona: "Queru Queru",
-      operacion: "anticretico",
-      tipo: "casa",
-      precio: 50000,
-      nombre: "Casa anticrético",
-      imagen: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
-      descripcion: "Zona tranquila"
+      descripcion: "Ideal estudiantes"
     }
   ];
 
   var markers = [];
 
-  // 📄 MODAL
-  function abrirModal(l) {
-    document.getElementById("modal").style.display = "flex";
-    document.getElementById("imgModal").src = l.imagen;
-    document.getElementById("tituloModal").innerText = l.nombre;
-    document.getElementById("precioModal").innerText = "Bs " + l.precio;
-    document.getElementById("descModal").innerText = l.descripcion;
+  function abrirModal(l){
+    alert(l.nombre + " - " + l.precio);
   }
 
-  function cerrarModal() {
-    document.getElementById("modal").style.display = "none";
-  }
-
-  // 🔍 FILTROS
-  function aplicarFiltros() {
+  function aplicarFiltros(){
 
     let zona = document.getElementById("ubicacion").value.toLowerCase();
     let min = document.getElementById("min").value;
@@ -236,19 +199,14 @@
       let okMin = !min || l.precio >= min;
       let okMax = !max || l.precio <= max;
 
-      if (okZona && okOp && okTipo && okMin && okMax) {
+      if(okZona && okOp && okTipo && okMin && okMax){
 
         let marker = L.marker([l.lat, l.lng]).addTo(map);
 
         marker.bindPopup(`
-          <div style="width:220px">
-            <img src="${l.imagen}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
-            <h3>${l.nombre}</h3>
-            <p><b>Bs ${l.precio}</b></p>
-            <button onclick='abrirModal(${JSON.stringify(l).replace(/'/g,"&apos;")})'>
-              Ver propiedad
-            </button>
-          </div>
+          <b>${l.nombre}</b><br>
+          ${l.zona}<br>
+          Bs ${l.precio}
         `);
 
         markers.push(marker);
@@ -256,8 +214,8 @@
       }
     });
 
-    if (bounds.length > 0) {
-      map.fitBounds(bounds, { padding: [50, 50] });
+    if(bounds.length){
+      map.fitBounds(bounds, {padding:[50,50]});
     }
   }
 
