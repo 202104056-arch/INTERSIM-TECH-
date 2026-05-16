@@ -1,38 +1,123 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mapa Inmobiliario PRO</title>
+  <title>Cochatech Real Estate</title>
   <meta charset="utf-8" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <style>
-    body { font-family: Arial; margin: 0; }
 
-    h2 { text-align:center; margin:10px; }
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: #eef3f9;
+    }
 
+    /* 🏢 HEADER BRANDING */
+    #header {
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: white;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .tagline {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    /* 📊 FILTROS */
     #filters {
-      padding:10px;
-      text-align:center;
-      background:#f5f5f5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 15px;
+      background: white;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    input, select {
-      margin:5px;
-      padding:6px;
+    #filters input,
+    #filters select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      outline: none;
     }
 
+    #filters button {
+      padding: 10px 18px;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    #filters button:hover {
+      transform: scale(1.05);
+    }
+
+    /* 🗺️ MAPA */
     #map {
-      height: 80vh;
+      height: 75vh;
       width: 100%;
     }
+
+    /* 🧾 MODAL */
+    #modal {
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.6);
+      justify-content:center;
+      align-items:center;
+    }
+
+    #modal > div {
+      background:white;
+      width:340px;
+      padding:15px;
+      border-radius:15px;
+      position:relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    #modal img {
+      width:100%;
+      border-radius:10px;
+    }
+
+    #close {
+      position:absolute;
+      top:10px;
+      right:12px;
+      cursor:pointer;
+      font-size:18px;
+    }
+
   </style>
 </head>
 
 <body>
 
-<h2>🏠 Mapa Inmobiliario PRO</h2>
+<!-- 🏢 HEADER -->
+<div id="header">
+  <div class="logo">🏢 COCHATECH REAL ESTATE</div>
+  <div class="tagline">Encuentra tu propiedad ideal en Cochabamba</div>
+</div>
 
 <!-- 🔍 FILTROS -->
 <div id="filters">
@@ -58,43 +143,20 @@
   <input id="min" type="number" placeholder="Precio min" />
   <input id="max" type="number" placeholder="Precio max" />
 
-  <button onclick="aplicarFiltros()">Buscar</button>
+  <button onclick="aplicarFiltros()">🔍 Buscar</button>
 </div>
 
+<!-- 🗺️ MAPA -->
 <div id="map"></div>
 
 <!-- 🧾 MODAL -->
-<div id="modal" style="
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
-  align-items:center;
-">
-
-  <div style="
-    background:white;
-    width:320px;
-    padding:15px;
-    border-radius:12px;
-    position:relative;
-  ">
-
-    <span onclick="cerrarModal()" style="
-      position:absolute;
-      top:8px;
-      right:12px;
-      cursor:pointer;
-      font-size:18px;
-    ">✖</span>
-
-    <img id="imgModal" style="width:100%;border-radius:10px;">
+<div id="modal">
+  <div>
+    <span id="close" onclick="cerrarModal()">✖</span>
+    <img id="imgModal">
     <h3 id="tituloModal"></h3>
     <p id="precioModal"></p>
     <p id="descModal"></p>
-
   </div>
 </div>
 
@@ -107,6 +169,8 @@
     maxZoom: 19
   }).addTo(map);
 
+  let markers = [];
+
   // 🏠 PROPIEDADES
   var lugares = [
     {
@@ -116,7 +180,7 @@
       operacion: "compra",
       tipo: "casa",
       precio: 120000,
-      nombre: "Casa moderna Cala Cala",
+      nombre: "Casa Moderna",
       imagen: "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
       descripcion: "Casa amplia con jardín"
     },
@@ -127,7 +191,7 @@
       operacion: "alquiler",
       tipo: "departamento",
       precio: 350,
-      nombre: "Depto centro",
+      nombre: "Depto Centro",
       imagen: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
       descripcion: "Ideal estudiantes"
     },
@@ -138,24 +202,11 @@
       operacion: "anticretico",
       tipo: "casa",
       precio: 50000,
-      nombre: "Casa anticrético",
+      nombre: "Casa Anticrético",
       imagen: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
       descripcion: "Zona tranquila"
-    },
-    {
-      lat: -17.42,
-      lng: -66.13,
-      zona: "Sopocachi",
-      operacion: "compra",
-      tipo: "terreno",
-      precio: 80000,
-      nombre: "Terreno amplio",
-      imagen: "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
-      descripcion: "Ideal construcción"
     }
   ];
-
-  var markers = [];
 
   // 📄 MODAL
   function abrirModal(l) {
@@ -170,7 +221,7 @@
     document.getElementById("modal").style.display = "none";
   }
 
-  // 🔍 FILTROS COMPLETOS
+  // 🔍 FILTROS
   function aplicarFiltros() {
 
     let zona = document.getElementById("ubicacion").value.toLowerCase();
@@ -197,14 +248,12 @@
         let marker = L.marker([l.lat, l.lng]).addTo(map);
 
         marker.bindPopup(`
-          <div style="width:220px">
-            <img src="${l.imagen}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;">
-            <h3>${l.nombre}</h3>
-            <p><b>Bs ${l.precio}</b></p>
-            <button onclick='abrirModal(${JSON.stringify(l).replace(/'/g,"&apos;")})'>
-              Ver propiedad
-            </button>
-          </div>
+          <b>${l.nombre}</b><br>
+          ${l.zona}<br>
+          Bs ${l.precio}<br>
+          <button onclick='abrirModal(${JSON.stringify(l).replace(/'/g,"&apos;")})'>
+            Ver propiedad
+          </button>
         `);
 
         markers.push(marker);
@@ -217,7 +266,6 @@
     }
   }
 
-  // INICIO
   aplicarFiltros();
 
 </script>
