@@ -12,17 +12,18 @@
     body {
       font-family: Arial;
       margin: 0;
-      background: #eef3f9;
+      background: #eef4fb;
     }
 
-    /* 🏢 HEADER */
+    /* 🟦 HEADER AZUL */
     #header {
-      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      background: linear-gradient(90deg, #0d47a1, #1976d2);
       color: white;
       padding: 18px;
       text-align: center;
       font-weight: bold;
       font-size: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
     .tagline {
@@ -46,21 +47,32 @@
     #filters select {
       padding: 10px;
       border-radius: 8px;
-      border: 1px solid #ddd;
+      border: 1px solid #cfd8dc;
+      outline: none;
+      transition: 0.2s;
     }
 
+    #filters input:focus,
+    #filters select:focus {
+      border-color: #1976d2;
+      box-shadow: 0 0 5px rgba(25,118,210,0.3);
+    }
+
+    /* 🔵 BOTÓN AZUL */
     #filters button {
       padding: 10px 18px;
-      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      background: linear-gradient(90deg, #0d47a1, #1976d2);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.2s;
     }
 
     #filters button:hover {
       transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(25,118,210,0.3);
     }
 
     /* 🗺️ MAPA */
@@ -86,6 +98,7 @@
       padding:15px;
       border-radius:15px;
       position:relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     #modal img {
@@ -99,6 +112,7 @@
       right:12px;
       cursor:pointer;
       font-size:18px;
+      color:#1976d2;
     }
 
   </style>
