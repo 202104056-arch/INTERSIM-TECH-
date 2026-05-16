@@ -55,7 +55,16 @@
       if (tipo === "todos" || l.tipo === tipo) {
         var marker = L.marker([l.lat, l.lng])
           .addTo(map)
-          .bindPopup(l.nombre);
+          .bindPopup(`
+  <div style="width:200px">
+    <h3>${l.nombre}</h3>
+    <p><b>Tipo:</b> ${l.tipo}</p>
+    <p><b>Precio:</b> ${l.precio}</p>
+    <button onclick="alert('Ver propiedad: ${l.nombre}')">
+      Ver más
+    </button>
+  </div>
+`);
 
         markers.push(marker);
       }
