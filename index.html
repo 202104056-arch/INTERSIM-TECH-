@@ -43,12 +43,14 @@
 
 <div id="map"></div>
 
-<!-- 🧾 MODAL (FICHA PROPIEDAD) -->
+<!-- 🧾 MODAL -->
 <div id="modal" style="
   display:none;
   position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
   background:rgba(0,0,0,0.6);
   justify-content:center;
   align-items:center;
@@ -102,25 +104,25 @@
       lat: -17.41,
       lng: -66.17,
       tipo: "alquiler",
-      nombre: "Depto Centro",
+      nombre: "Departamento Centro",
       precio: "$350/mes",
       imagen: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      descripcion: "Departamento céntrico para estudiantes."
+      descripcion: "Departamento céntrico ideal para estudiantes."
     },
     {
       lat: -17.37,
       lng: -66.16,
       tipo: "venta",
-      nombre: "Casa Familiar",
+      nombre: "Casa Familiar Queru Queru",
       precio: "$95,000",
       imagen: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
-      descripcion: "Zona tranquila con amplio patio."
+      descripcion: "Zona tranquila con patio amplio."
     }
   ];
 
   var markers = [];
 
-  // 🧠 ABRIR MODAL
+  // 📄 MODAL
   function abrirModal(l) {
     document.getElementById("modal").style.display = "flex";
     document.getElementById("imgModal").src = l.imagen;
@@ -133,7 +135,7 @@
     document.getElementById("modal").style.display = "none";
   }
 
-  // 📍 MOSTRAR + FILTRAR + AUTO ZOOM
+  // 📍 MOSTRAR + FILTRO + AUTO ZOOM
   function mostrar(filtro) {
 
     markers.forEach(m => map.removeLayer(m));
@@ -147,23 +149,25 @@
 
         var marker = L.marker([l.lat, l.lng]).addTo(map);
 
-        marker.bindPopup(`
+        let popupContent = `
           <div style="width:200px">
             <img src="${l.imagen}" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
             <h3>${l.nombre}</h3>
             <p><b>${l.precio}</b></p>
-            <button onclick='abrirModal(${JSON.stringify(l)})'>
+            <button onclick='abrirModal(${JSON.stringify(l).replace(/'/g,"&apos;")})'>
               Ver propiedad
             </button>
           </div>
-        `);
+        `;
+
+        marker.bindPopup(popupContent);
 
         markers.push(marker);
         bounds.push([l.lat, l.lng]);
       }
     });
 
-    // 🗺️ ESTE ES EL EFECTO "MAPA SE REDUCE / SE AJUSTA"
+    // 🗺️ AUTO-ZOOM (reduce área según filtro)
     if (bounds.length > 0) {
       map.fitBounds(bounds, { padding: [50, 50] });
     }
